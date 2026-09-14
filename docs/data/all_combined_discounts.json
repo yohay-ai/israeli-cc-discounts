@@ -16867,6 +16867,24 @@
     },
     {
         "club": "HOT",
+        "business_name": "Studios cell - סטודיוס סל",
+        "discount": "3% הנחה במעמד החיוב",
+        "discount_url": "https://www.hot.co.il/הטבה/61656/Studios-cell---סטודיוס-סל",
+        "discount_type": "billing_discount",
+        "discount_value": 3.0,
+        "has_physical_store": true
+    },
+    {
+        "club": "HOT",
+        "business_name": "ספורט עמר",
+        "discount": "5% הנחה במעמד החיוב",
+        "discount_url": "https://www.hot.co.il/הטבה/61648/ספורט-עמר",
+        "discount_type": "billing_discount",
+        "discount_value": 5.0,
+        "has_physical_store": true
+    },
+    {
+        "club": "HOT",
         "business_name": "אקספרס של חצות",
         "discount": "2% הנחה במעמד החיוב",
         "discount_url": "https://www.hot.co.il/הטבה/61646/אקספרס-של-חצות",
@@ -27694,18 +27712,18 @@
     },
     {
         "club": "HOT",
-        "business_name": "קלין שופ",
+        "business_name": "יקב בזלת הגולן",
         "discount": "4% הנחה במעמד החיוב",
-        "discount_url": "https://www.hot.co.il/הטבה/8894/קלין-שופ",
+        "discount_url": "https://www.hot.co.il/הטבה/8902/יקב-בזלת-הגולן",
         "discount_type": "billing_discount",
         "discount_value": 4.0,
         "has_physical_store": true
     },
     {
         "club": "HOT",
-        "business_name": "יקב בזלת הגולן",
+        "business_name": "קלין שופ",
         "discount": "4% הנחה במעמד החיוב",
-        "discount_url": "https://www.hot.co.il/הטבה/8902/יקב-בזלת-הגולן",
+        "discount_url": "https://www.hot.co.il/הטבה/8894/קלין-שופ",
         "discount_type": "billing_discount",
         "discount_value": 4.0,
         "has_physical_store": true

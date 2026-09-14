@@ -4916,6 +4916,15 @@
       },
       {
         "club": "HOT",
+        "business_name": "Studios cell - סטודיוס סל",
+        "discount": "3% הנחה במעמד החיוב",
+        "discount_url": "https://www.hot.co.il/הטבה/61656/Studios-cell---סטודיוס-סל",
+        "discount_type": "billing_discount",
+        "discount_value": 3.0,
+        "has_physical_store": true
+      },
+      {
+        "club": "HOT",
         "business_name": "מרקט בית קליה אבו עלי ובניו",
         "discount": "2% הנחה במעמד החיוב",
         "discount_url": "https://www.hot.co.il/הטבה/61434/מרקט-בית-קליה-אבו-עלי-ובניו",
@@ -23308,6 +23317,15 @@
         "discount_url": "https://www.hot.co.il/הטבה/34429/נינה-מנדל---קוסמטיקה-ויופי",
         "discount_type": "billing_discount",
         "discount_value": 3.5,
+        "has_physical_store": true
+      },
+      {
+        "club": "HOT",
+        "business_name": "Studios cell - סטודיוס סל",
+        "discount": "3% הנחה במעמד החיוב",
+        "discount_url": "https://www.hot.co.il/הטבה/61656/Studios-cell---סטודיוס-סל",
+        "discount_type": "billing_discount",
+        "discount_value": 3.0,
         "has_physical_store": true
       },
       {
