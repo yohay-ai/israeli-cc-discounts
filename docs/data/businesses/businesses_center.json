@@ -195720,21 +195720,6 @@
         "discount_type": "billing_discount",
         "discount_value": 2.0,
         "has_physical_store": true
-      },
-      {
-        "club": "BUYME",
-        "business_name": "יערית",
-        "discount": "איך משתמשים ב-BUYME שלך ברכישות אונליין? נכנסים לאתר יערית ובוחרים את הפריטים שהכי עושים לך טוב בלב. מוסיפים לעגלה - ועוברים לקופה לשלב התשלום. שימו לב, מימוש ה-BUYME הוא במעמד התשלום, ולא ניתן לממש את המתנה בשלב בחירת הפריטים או בחלונית \"קוד הנחה\". בעמוד התשלום ממלאים את פרטי המשלוח ולוחצים 'שלם עכשיו' בעמוד הבא בוחרים ב'BUYME' מזינים את 16 הספרות שמרכיבות את קוד ה-BUYME שלך, לוחצים 'לתשלום' – ומשלימים את ההזמנה. וזהו, המתנה שבחרת בדרך אלייך! נ.ב, ניתן להוסיף עוד אמצעי תשלום או/ו שוברים נוספים לפרטים נוספים ניתן ליצור קשר עם בית העסק",
-        "discount_url": "https://buyme.co.il/brands/13438757?searchTerm=%D7%99%D7%A2%D7%A8%D7%99%D7%AA#",
-        "discount_type": "voucher",
-        "discount_value": null,
-        "supplier_name": [
-          "BUYME ALL - מגוון אדיר במתנה אחת",
-          "BUYME BABY- מגוון מתנות לידה",
-          "BUYME FASHION & BEAUTY",
-          "BUYME LOCAL – מתנות מקומיות"
-        ],
-        "has_physical_store": true
       }
     ],
     "source": "docs/data/businesses"
