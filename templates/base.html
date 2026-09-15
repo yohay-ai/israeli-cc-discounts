@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    {% include "components/base_head.html" %}
+    <title>{% block title %}מאתר הנחות והטבות אשראי | חבר, HOT, HTzone, BUYME, MAX{% endblock %}</title>
+    <meta name="description" content="{% block description %}חיפוש מיידי של כל ההנחות וההטבות בכרטיסי מועדון: חבר, HOT, HTzone, BUYME ו-MAX.{% endblock %}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <!-- Background Glow Effect -->
+    <div class="app-background">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <!-- Site Header Component -->
+    {% include "components/header.html" %}
+
+    <!-- Main Content -->
+    <main class="container main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Site Footer Component -->
+    {% include "components/footer.html" %}
+
+    <!-- Shared Card Template Component -->
+    {% include "components/card.html" %}
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

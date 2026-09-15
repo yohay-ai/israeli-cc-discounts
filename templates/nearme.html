@@ -1,115 +1,20 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
+{% extends "base.html" %}
 
-<head>
-<!-- components/base_head.html -->
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#0b0f19">
+{% block title %}עסקים קרובים ומפה | DiscountFinder{% endblock %}
+{% block description %}מפת עסקים והטבות קרובות לפי מיקום - חבר, HOT, HTzone, BUYME ו-MAX{% endblock %}
 
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="./styles.css">    <title>עסקים קרובים ומפה | DiscountFinder</title>
-    <meta name="description" content="מפת עסקים והטבות קרובות לפי מיקום - חבר, HOT, HTzone, BUYME ו-MAX">
+{% block extra_head %}
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-</head>
+{% endblock %}
 
-<body>
-    <!-- Background Glow Effect -->
-    <div class="app-background">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
-    </div>
-
-    <!-- Site Header Component -->
-<!-- components/header.html -->
-<header class="site-header">
-    <div class="container header-content">
-        <div class="brand">
-            <div class="brand-icon">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                    <line x1="2" y1="10" x2="22" y2="10"></line>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h1 class="brand-title">Discount<span class="brand-accent">Finder</span></h1>
-                <p class="brand-subtitle">חיפוש עסקים והטבות קרובים</p>
-            </div>
-        </div>
-
-        <!-- Stats Bar in Header -->
-        <div class="header-stats" id="headerStats">
-            <div class="stat-pill" id="statTotalDeals">
-                <span class="stat-num" id="totalDealsCount">--</span>
-                <span class="stat-label">הטבות באיזור</span>
-            </div>
-            <div class="stat-pill" id="statTotalStores">
-                <span class="stat-num" id="totalStoresCount">--</span>
-                <span class="stat-label">עסקים באיזור</span>
-            </div>
-            <span id="status" style="font-size:0.85rem; color: var(--text-accent); font-weight: 600;">טוען את המפה...</span>
-        </div>
-
-        <nav class="header-nav" aria-label="ניווט בין עמודים">
-            <a href="./" class="nav-link ">חיפוש הנחות</a>
-            <a href="./nearme" class="nav-link active">עסקים קרובים</a>
-        </nav>
-    </div>
-</header>
-    <!-- Main Content -->
-    <main class="container main-content">
+{% block content %}
 <!-- Club Filter Chips Component with Radius Control -->
-<!-- components/club_filters.html -->
-<div class="club-filters-container" id="filter-row" aria-label="סינון לפי מועדונים">
-    <span class="filters-group-label">סינון לפי מועדונים (ניתן לבחור מספר מועדונים):</span>
-    <div class="club-filters-group" role="group" aria-label="סינון לפי מועדונים">
-        <button class="filter-chip active" data-club="ALL" type="button" aria-pressed="true" id="filterAll">
-            <span class="chip-checkbox">✓</span>
-            <span class="chip-name">כל המועדונים</span>
-        </button>
-        <button class="filter-chip chip-mcc" data-club="MCC" type="button" aria-pressed="false" id="filterMCC">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag mcc-tag">חבר</span>
-            <span class="chip-name">חבר (משרתי הקבע והגמלאים)</span>
-        </button>
-        <button class="filter-chip chip-hot" data-club="HOT" type="button" aria-pressed="false" id="filterHOT">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag hot-tag">HOT</span>
-            <span class="chip-name">מועדון הוט</span>
-        </button>
-        <button class="filter-chip chip-htzone" data-club="HTzone" type="button" aria-pressed="false" id="filterHTzone">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag htzone-tag">HTzone</span>
-            <span class="chip-name">הייטק זון</span>
-        </button>
-        <button class="filter-chip chip-buyme" data-club="BUYME" type="button" aria-pressed="false" id="filterBUYME">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag buyme-tag">BUYME</span>
-            <span class="chip-name">Buyme</span>
-        </button>
-        <button class="filter-chip chip-max" data-club="MAX" type="button" aria-pressed="false" id="filterMAX">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag max-tag">MAX</span>
-            <span class="chip-name">MAX</span>
-        </button>
-    </div>
-    <div id="controls-radius">
-        <label for="radius-slider">רדיוס חיפוש (ק"מ):</label>
-        <div id="radius-slider-container">
-            <input type="range" id="radius-slider" min="0.5" max="5" step="0.1" value="1.0"
-                oninput="updateRadiusFromSlider(this.value)">
-            <span id="radius-value">1.0</span>
-        </div>
-    </div>
-</div>
+{% set show_counts = False %}
+{% set show_radius_control = True %}
+{% include "components/club_filters.html" %}
+
 <!-- Map and List Container -->
 <div id="map-container">
   <!-- Map -->
@@ -130,44 +35,9 @@
     <div id="details-content"></div>
   </div>
 </div>
-    </main>
+{% endblock %}
 
-    <!-- Site Footer Component -->
-<!-- components/footer.html -->
-<footer class="site-footer">
-    <div class="container footer-content">
-        <div class="footer-left">
-            <p>מערכת איתור והשוואת הנחות אשראי &copy; 2026</p>
-            <p class="footer-note">הנתונים נאספים ממועדוני האשראי הרשמיים (חבר, HOT, HTzone) וגם מ-BUYME ו-MAX ומתעדכנים מדי יום.</p>
-        </div>
-        <div class="footer-links">
-            <a href="/docs" target="_blank" class="footer-link">תיעוד API (Swagger)</a>
-            <a href="/api/info" target="_blank" class="footer-link">מצב שירות (JSON)</a>
-        </div>
-    </div>
-</footer>
-    <!-- Shared Card Template Component -->
-<!-- components/card.html -->
-<template id="deal-card-template">
-    <div class="card business-card">
-        <div class="card-header">
-            <div class="card-title-area">
-                <h3 class="business-name"></h3>
-                <span class="multi-badge hidden"></span>
-            </div>
-            <div class="best-discount-pill hidden">
-                <span class="best-disc-val"></span>
-                <span class="best-disc-lbl">הנחה מרבית</span>
-            </div>
-            <div class="voucher-pill hidden">
-                <span class="voucher-icon">🎁</span>
-                <span class="voucher-label">שובר</span>
-                <span class="voucher-count"></span>
-            </div>
-        </div>
-        <div class="discounts-list"></div>
-    </div>
-</template>
+{% block extra_scripts %}
 <!-- Official Leaflet 1.9.4 JavaScript -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -730,6 +600,4 @@
     closeBtn.onclick = () => { pane.style.display = 'none'; };
   }
 </script>
-</body>
-
-</html>
+{% endblock %}

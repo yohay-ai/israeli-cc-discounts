@@ -22,10 +22,11 @@ import re
 import math
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from rapidfuzz import fuzz
 
 BASE_DIR = os.path.dirname(__file__)
@@ -34,7 +35,12 @@ DOCS_DATA_DIR = os.path.join(BASE_DIR, "docs", "data")
 DATA_FILE = os.path.join(DATA_DIR, "all_combined_discounts.json")
 METADATA_FILE = os.path.join(DATA_DIR, "scrape_metadata.json")
 STATIC_DIR = os.path.join(BASE_DIR, "docs")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 BUSINESSES_WITH_DISCOUNTS = os.path.join(DOCS_DATA_DIR, "businesses_with_discounts.json")
+
+templates: Optional[Jinja2Templates] = None
+if os.path.exists(TEMPLATES_DIR):
+    templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # in-memory cache for businesses_with_discounts
 _BUSINESSES_CACHE: list[dict] | None = None
@@ -171,8 +177,20 @@ def get_app_js():
 
 
 @app.get("/")
-def index():
+def index(request: Request):
     """Serve the Web UI interface."""
+    if templates and os.path.exists(os.path.join(TEMPLATES_DIR, "index.html")):
+        return templates.TemplateResponse(
+            request=request,
+            name="index.html",
+            context={
+                "active_page": "index",
+                "subtitle": "חיפוש והשוואת הטבות מועדוני אשראי",
+                "deals_label": "הטבות פעילות",
+                "stores_label": "עסקים ורשתות",
+                "show_status": False,
+            },
+        )
     index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)
@@ -189,8 +207,20 @@ def index():
     }
 
 @app.get("/nearme")
-def nearme():
+def nearme(request: Request):
     """Serve the Web UI interface."""
+    if templates and os.path.exists(os.path.join(TEMPLATES_DIR, "nearme.html")):
+        return templates.TemplateResponse(
+            request=request,
+            name="nearme.html",
+            context={
+                "active_page": "nearme",
+                "subtitle": "חיפוש עסקים והטבות קרובים",
+                "deals_label": "הטבות באיזור",
+                "stores_label": "עסקים באיזור",
+                "show_status": True,
+            },
+        )
     index_file = os.path.join(STATIC_DIR, "nearme.html")
     if os.path.exists(index_file):
         return FileResponse(index_file)

@@ -1,0 +1,38 @@
+<!-- components/header.html -->
+<header class="site-header">
+    <div class="container header-content">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                    <line x1="2" y1="10" x2="22" y2="10"></line>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <h1 class="brand-title">Discount<span class="brand-accent">Finder</span></h1>
+                <p class="brand-subtitle">{{ subtitle | default("חיפוש והשוואת הטבות מועדוני אשראי") }}</p>
+            </div>
+        </div>
+
+        <!-- Stats Bar in Header -->
+        <div class="header-stats" id="headerStats">
+            <div class="stat-pill" id="statTotalDeals">
+                <span class="stat-num" id="totalDealsCount">--</span>
+                <span class="stat-label">{{ deals_label | default("הטבות פעילות") }}</span>
+            </div>
+            <div class="stat-pill" id="statTotalStores">
+                <span class="stat-num" id="totalStoresCount">--</span>
+                <span class="stat-label">{{ stores_label | default("עסקים ורשתות") }}</span>
+            </div>
+            {% if show_status %}
+            <span id="status" style="font-size:0.85rem; color: var(--text-accent); font-weight: 600;">טוען את המפה...</span>
+            {% endif %}
+        </div>
+
+        <nav class="header-nav" aria-label="ניווט בין עמודים">
+            <a href="./" class="nav-link {% if active_page == 'index' or active_page == 'search' %}active{% endif %}">חיפוש הנחות</a>
+            <a href="./nearme" class="nav-link {% if active_page == 'nearme' %}active{% endif %}">עסקים קרובים</a>
+        </nav>
+    </div>
+</header>
