@@ -1505,6 +1505,15 @@
       {
         "club": "חבר טעמים",
         "business_name": "קפה קפה",
+        "discount": "חבר טעמים | בית קפה חלבי",
+        "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
+        "discount_type": "rechargeable_card",
+        "discount_value": 30,
+        "has_physical_store": true
+      },
+      {
+        "club": "חבר טעמים",
+        "business_name": "קפה קפה",
         "discount": "חבר טעמים | בית קפה מסעדה",
         "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
         "discount_type": "rechargeable_card",
@@ -1640,6 +1649,15 @@
         "club": "חבר טעמים",
         "business_name": "קפה קפה",
         "discount": "חבר טעמים | בשרי",
+        "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
+        "discount_type": "rechargeable_card",
+        "discount_value": 30,
+        "has_physical_store": true
+      },
+      {
+        "club": "חבר טעמים",
+        "business_name": "קפה קפה",
+        "discount": "חבר טעמים | בית קפה חלבי",
         "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
         "discount_type": "rechargeable_card",
         "discount_value": 30,
@@ -3698,6 +3716,15 @@
       {
         "club": "חבר טעמים",
         "business_name": "קפה קפה",
+        "discount": "חבר טעמים | בית קפה חלבי",
+        "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
+        "discount_type": "rechargeable_card",
+        "discount_value": 30,
+        "has_physical_store": true
+      },
+      {
+        "club": "חבר טעמים",
+        "business_name": "קפה קפה",
         "discount": "חבר טעמים | בית קפה מסעדה",
         "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
         "discount_type": "rechargeable_card",
@@ -3841,6 +3868,15 @@
       {
         "club": "חבר טעמים",
         "business_name": "קפה קפה",
+        "discount": "חבר טעמים | בית קפה חלבי",
+        "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
+        "discount_type": "rechargeable_card",
+        "discount_value": 30,
+        "has_physical_store": true
+      },
+      {
+        "club": "חבר טעמים",
+        "business_name": "קפה קפה",
         "discount": "חבר טעמים | בית קפה מסעדה",
         "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
         "discount_type": "rechargeable_card",
@@ -3976,6 +4012,15 @@
         "club": "חבר טעמים",
         "business_name": "קפה קפה",
         "discount": "חבר טעמים | בשרי",
+        "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
+        "discount_type": "rechargeable_card",
+        "discount_value": 30,
+        "has_physical_store": true
+      },
+      {
+        "club": "חבר טעמים",
+        "business_name": "קפה קפה",
+        "discount": "חבר טעמים | בית קפה חלבי",
         "discount_url": "https://www.hvr.co.il/site/pg/teamim_card_store",
         "discount_type": "rechargeable_card",
         "discount_value": 30,
