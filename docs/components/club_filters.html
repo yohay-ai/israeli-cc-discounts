@@ -1,42 +1,8 @@
 <!-- components/club_filters.html -->
 <div class="club-filters-container" id="filter-row" aria-label="סינון לפי מועדונים">
     <span class="filters-group-label">סינון לפי מועדונים (ניתן לבחור מספר מועדונים):</span>
-    <div class="club-filters-group" role="group" aria-label="סינון לפי מועדונים">
-        <button class="filter-chip active" data-club="ALL" type="button" aria-pressed="true" id="filterAll">
-            <span class="chip-checkbox">✓</span>
-            <span class="chip-name">כל המועדונים</span>
-            {% if show_counts %}<span class="chip-count" id="countAll">--</span>{% endif %}
-        </button>
-        <button class="filter-chip chip-mcc" data-club="MCC" type="button" aria-pressed="false" id="filterMCC">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag mcc-tag">חבר</span>
-            <span class="chip-name">חבר (משרתי הקבע והגמלאים)</span>
-            {% if show_counts %}<span class="chip-count" id="countMCC">--</span>{% endif %}
-        </button>
-        <button class="filter-chip chip-hot" data-club="HOT" type="button" aria-pressed="false" id="filterHOT">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag hot-tag">HOT</span>
-            <span class="chip-name">מועדון הוט</span>
-            {% if show_counts %}<span class="chip-count" id="countHOT">--</span>{% endif %}
-        </button>
-        <button class="filter-chip chip-htzone" data-club="HTzone" type="button" aria-pressed="false" id="filterHTzone">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag htzone-tag">HTzone</span>
-            <span class="chip-name">הייטק זון</span>
-            {% if show_counts %}<span class="chip-count" id="countHTzone">--</span>{% endif %}
-        </button>
-        <button class="filter-chip chip-buyme" data-club="BUYME" type="button" aria-pressed="false" id="filterBUYME">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag buyme-tag">BUYME</span>
-            <span class="chip-name">Buyme</span>
-            {% if show_counts %}<span class="chip-count" id="countBUYME">--</span>{% endif %}
-        </button>
-        <button class="filter-chip chip-max" data-club="MAX" type="button" aria-pressed="false" id="filterMAX">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag max-tag">MAX</span>
-            <span class="chip-name">MAX</span>
-            {% if show_counts %}<span class="chip-count" id="countMAX">--</span>{% endif %}
-        </button>
+    <div class="club-filters-group" id="programFilters" role="group" aria-label="סינון לפי מועדונים" data-show-counts="{{ 'true' if show_counts else 'false' }}">
+        <span class="filters-loading">טוען מועדונים…</span>
     </div>
     {% if show_radius_control %}
     <div id="controls-radius">

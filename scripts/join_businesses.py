@@ -94,6 +94,46 @@ OUT_FILE = os.path.join(DOCS_DATA, "businesses_with_discounts.json")
 UNMATCHED_FILE = os.path.join(DATA_DIR, "unmatched_discounts.json")
 
 
+PROGRAM_ALIASES = {
+    "mcc": {"MCC", "mcc", "חבר"},
+    "mcc-sheli": {"חבר שלי"},
+    "mcc-teamim": {"חבר טעמים"},
+    "hot": {"HOT", "hot", "מועדון הוט"},
+    "htzone": {"HTzone", "htzone"},
+    "buyme": {"BUYME"},
+    "max": {"MAX"},
+    "max-giftcard": {"GiftCard max"},
+    "max-super-giftcard": {"Super GiftCard max"},
+    "max-food": {"Giftcard Food"},
+    "max-executive": {"כרטיס הטבות executive"},
+    "discount-key": {"מפתח דיסקונט"},
+}
+PROGRAM_PARENTS = {
+    "mcc-sheli": "mcc",
+    "mcc-teamim": "mcc",
+    "max-giftcard": "max",
+    "max-super-giftcard": "max",
+    "max-food": "max",
+    "max-executive": "max",
+}
+
+
+def program_metadata(source_label: str) -> Dict[str, str | None]:
+    """Resolve a source club label while preserving child-program identity."""
+    label = str(source_label or "").strip()
+    for program_id, aliases in PROGRAM_ALIASES.items():
+        if label in aliases or label.lower() in {alias.lower() for alias in aliases}:
+            return {"program_id": program_id, "parent_program_id": PROGRAM_PARENTS.get(program_id)}
+    slug = re.sub(r"[^a-z0-9֐-׿]+", "-", label.lower()).strip("-") or "unknown"
+    return {"program_id": f"program-{slug}", "parent_program_id": None}
+
+
+def annotate_program(discount: Dict) -> Dict:
+    annotated = dict(discount)
+    annotated.update(program_metadata(annotated.get("club") or annotated.get("club_name") or ""))
+    return annotated
+
+
 def load_json(path: str) -> Any:
     with open(path, encoding="utf-8") as f:
         return json.load(f)
@@ -229,7 +269,7 @@ def match_and_join(discounts: List[Dict], branches: List[Dict],
                         best_dist = None
 
         if best:
-            d = dict(disc)
+            d = annotate_program(disc)
             d["matched_distance_m"] = best_dist
             best["discounts"].append(d)
         else:
@@ -306,7 +346,7 @@ def build_businesses_with_discounts(stores: List[Dict], discounts: List[Dict], g
             if not disc_name or not store_name:
                 continue
             if store_name in disc_name or disc_name in store_name:
-                matched.append(disc)
+                matched.append(annotate_program(disc))
 
         add_store_entry(store, matched, source="docs/data/businesses")
 
@@ -330,7 +370,7 @@ def build_businesses_with_discounts(stores: List[Dict], discounts: List[Dict], g
             if not disc_name or not item_name:
                 continue
             if disc_name == item_name:
-                matched.append(disc)
+                matched.append(annotate_program(disc))
 
         add_store_entry({
             "id": item.get("place_id") or item.get("business_name"),
