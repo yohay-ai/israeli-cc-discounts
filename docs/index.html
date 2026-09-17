@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="./styles.css">    <title>מאתר הנחות והטבות אשראי | חבר (משרתי הקבע והגמלאים), HOT, HTzone</title>
-    <meta name="description" content="חיפוש מיידי של כל ההנחות וההטבות בכרטיסי מועדון: חבר (משרתי הקבע והגמלאים), מועדון הוט (HOT), ו-HTzone. השוואת הנחות ומעבר ישיר להטבה.">
+<link rel="stylesheet" href="./styles.css">    <title>מאתר הנחות והטבות אשראי ומועדונים</title>
+    <meta name="description" content="חיפוש מיידי והשוואה של הנחות והטבות ממועדונים ותוכניות בישראל.">
 </head>
 
 <body>
@@ -66,9 +66,7 @@
 <section class="hero-section">
     <div class="hero-text-wrapper">
         <h2 class="hero-headline">איפה הכי משתלם לקנות היום?</h2>
-        <p class="hero-description">חפשו שם עסק, רשת או קטגוריה וגלו את כל ההנחות וההטבות בכרטיסי <strong
-                class="badge-mcc-text">חבר</strong>, <strong class="badge-hot-text">HOT</strong>, <strong
-                class="badge-htzone-text">HTzone</strong> ו-<strong class="badge-buyme-text">BUYME</strong></p>
+        <p class="hero-description">חפשו שם עסק, רשת או קטגוריה וגלו הטבות מכל המועדונים והתוכניות במקום אחד.</p>
     </div>
 
     <!-- Search Box Card -->
@@ -112,36 +110,8 @@
 <!-- components/club_filters.html -->
 <div class="club-filters-container" id="filter-row" aria-label="סינון לפי מועדונים">
     <span class="filters-group-label">סינון לפי מועדונים (ניתן לבחור מספר מועדונים):</span>
-    <div class="club-filters-group" role="group" aria-label="סינון לפי מועדונים">
-        <button class="filter-chip active" data-club="ALL" type="button" aria-pressed="true" id="filterAll">
-            <span class="chip-checkbox">✓</span>
-            <span class="chip-name">כל המועדונים</span>
-<span class="chip-count" id="countAll">--</span>        </button>
-        <button class="filter-chip chip-mcc" data-club="MCC" type="button" aria-pressed="false" id="filterMCC">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag mcc-tag">חבר</span>
-            <span class="chip-name">חבר (משרתי הקבע והגמלאים)</span>
-<span class="chip-count" id="countMCC">--</span>        </button>
-        <button class="filter-chip chip-hot" data-club="HOT" type="button" aria-pressed="false" id="filterHOT">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag hot-tag">HOT</span>
-            <span class="chip-name">מועדון הוט</span>
-<span class="chip-count" id="countHOT">--</span>        </button>
-        <button class="filter-chip chip-htzone" data-club="HTzone" type="button" aria-pressed="false" id="filterHTzone">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag htzone-tag">HTzone</span>
-            <span class="chip-name">הייטק זון</span>
-<span class="chip-count" id="countHTzone">--</span>        </button>
-        <button class="filter-chip chip-buyme" data-club="BUYME" type="button" aria-pressed="false" id="filterBUYME">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag buyme-tag">BUYME</span>
-            <span class="chip-name">Buyme</span>
-<span class="chip-count" id="countBUYME">--</span>        </button>
-        <button class="filter-chip chip-max" data-club="MAX" type="button" aria-pressed="false" id="filterMAX">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag max-tag">MAX</span>
-            <span class="chip-name">MAX</span>
-<span class="chip-count" id="countMAX">--</span>        </button>
+    <div class="club-filters-group" id="programFilters" role="group" aria-label="סינון לפי מועדונים" data-show-counts="true">
+        <span class="filters-loading">טוען מועדונים…</span>
     </div>
 </div>
         <!-- Sort and Fuzzy Sensitivity Controls -->
@@ -250,7 +220,7 @@
     <div class="container footer-content">
         <div class="footer-left">
             <p>מערכת איתור והשוואת הנחות אשראי &copy; 2026</p>
-            <p class="footer-note">הנתונים נאספים ממועדוני האשראי הרשמיים (חבר, HOT, HTzone) וגם מ-BUYME ו-MAX ומתעדכנים מדי יום.</p>
+            <p class="footer-note">הנתונים נאספים ממקורות רשמיים של מועדונים ותוכניות ומתעדכנים מדי יום.</p>
             <p id="dataFreshness" class="data-freshness" role="status" aria-live="polite">בודק מתי הנתונים עודכנו...</p>
         </div>
         <div class="footer-links">
@@ -282,6 +252,7 @@
     </div>
 </template>
     <script src="./freshness.js"></script>
+    <script src="./programs.js"></script>
 <!-- App JavaScript -->
 <script src="./app.js"></script>
 </body>

@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="./styles.css">    <title>עסקים קרובים ומפה | DiscountFinder</title>
-    <meta name="description" content="מפת עסקים והטבות קרובות לפי מיקום - חבר, HOT, HTzone, BUYME ו-MAX">
+    <meta name="description" content="מפת עסקים והטבות קרובות לפי מיקום ומועדון">
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
@@ -70,36 +70,8 @@
 <!-- components/club_filters.html -->
 <div class="club-filters-container" id="filter-row" aria-label="סינון לפי מועדונים">
     <span class="filters-group-label">סינון לפי מועדונים (ניתן לבחור מספר מועדונים):</span>
-    <div class="club-filters-group" role="group" aria-label="סינון לפי מועדונים">
-        <button class="filter-chip active" data-club="ALL" type="button" aria-pressed="true" id="filterAll">
-            <span class="chip-checkbox">✓</span>
-            <span class="chip-name">כל המועדונים</span>
-        </button>
-        <button class="filter-chip chip-mcc" data-club="MCC" type="button" aria-pressed="false" id="filterMCC">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag mcc-tag">חבר</span>
-            <span class="chip-name">חבר (משרתי הקבע והגמלאים)</span>
-        </button>
-        <button class="filter-chip chip-hot" data-club="HOT" type="button" aria-pressed="false" id="filterHOT">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag hot-tag">HOT</span>
-            <span class="chip-name">מועדון הוט</span>
-        </button>
-        <button class="filter-chip chip-htzone" data-club="HTzone" type="button" aria-pressed="false" id="filterHTzone">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag htzone-tag">HTzone</span>
-            <span class="chip-name">הייטק זון</span>
-        </button>
-        <button class="filter-chip chip-buyme" data-club="BUYME" type="button" aria-pressed="false" id="filterBUYME">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag buyme-tag">BUYME</span>
-            <span class="chip-name">Buyme</span>
-        </button>
-        <button class="filter-chip chip-max" data-club="MAX" type="button" aria-pressed="false" id="filterMAX">
-            <span class="chip-checkbox">✓</span>
-            <span class="club-logo-tag max-tag">MAX</span>
-            <span class="chip-name">MAX</span>
-        </button>
+    <div class="club-filters-group" id="programFilters" role="group" aria-label="סינון לפי מועדונים" data-show-counts="false">
+        <span class="filters-loading">טוען מועדונים…</span>
     </div>
     <div id="controls-radius">
         <label for="radius-slider">רדיוס חיפוש (ק"מ):</label>
@@ -111,18 +83,19 @@
     </div>
 </div>
 <!-- Map and List Container -->
-<div id="map-container">
-  <!-- Map -->
-  <div id="map">
-    <button id="pin-btn" class="btn" onclick="togglePinMode()">📍 בחר מיקום על המפה</button>
-  </div>
+<div id="nearby-results-layout">
+  <section id="map-panel" aria-label="מפת עסקים">
+    <div id="map-toolbar">
+      <button id="pin-btn" class="btn" type="button">📍 בחר מיקום על המפה</button>
+    </div>
+    <div id="map"></div>
+  </section>
 
-  <!-- Business List -->
-  <div id="business-list-container">
+  <section id="business-list-container" aria-label="רשימת עסקים קרובים">
     <div id="business-list" class="cards-grid nearme-cards-grid">
       <!-- Cards will be inserted here -->
     </div>
-  </div>
+  </section>
 
   <!-- Details Pane -->
   <div id="details-pane" style="display:none;">
@@ -138,7 +111,7 @@
     <div class="container footer-content">
         <div class="footer-left">
             <p>מערכת איתור והשוואת הנחות אשראי &copy; 2026</p>
-            <p class="footer-note">הנתונים נאספים ממועדוני האשראי הרשמיים (חבר, HOT, HTzone) וגם מ-BUYME ו-MAX ומתעדכנים מדי יום.</p>
+            <p class="footer-note">הנתונים נאספים ממקורות רשמיים של מועדונים ותוכניות ומתעדכנים מדי יום.</p>
             <p id="dataFreshness" class="data-freshness" role="status" aria-live="polite">בודק מתי הנתונים עודכנו...</p>
         </div>
         <div class="footer-links">
@@ -170,6 +143,7 @@
     </div>
 </template>
     <script src="./freshness.js"></script>
+    <script src="./programs.js"></script>
 <!-- Official Leaflet 1.9.4 JavaScript -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -180,8 +154,9 @@
   let userMarker = null;
   let radiusCircle = null;
   let businessLayerGroup = L.layerGroup();
-  const CLUB_KEYS = ['MCC', 'HOT', 'HTzone', 'BUYME', 'MAX'];
-  let selectedClubs = new Set(CLUB_KEYS);
+  let programRegistry = ProgramRegistry.build([]);
+  let selectedClubs = new Set();
+  let _filtersInitialized = false;
 
   let isPinMode = false;
   let currentUserLat = 32.0853; // Default Tel Aviv center fallback
@@ -220,22 +195,12 @@
     return R * c;
   }
 
-  const CLUB_PIN_COLORS = {
-    MCC: '#f59e0b',
-    HOT: '#f43f5e',
-    HTzone: '#06b6d4',
-    BUYME: '#60a5fa',
-    default: '#38bdf8'
-  };
-
-  function createClubPinIcon(club) {
-    const color = CLUB_PIN_COLORS[club] || CLUB_PIN_COLORS.default;
+  function createClubPinIcon(programId) {
+    const info = programRegistry.byId.get(programId) || { color: ProgramRegistry.fallbackColor(programId) };
     return L.divIcon({
       className: 'club-pin-wrapper',
-      html: `<span class="club-pin" style="--pin-color: ${color};"></span>`,
-      iconSize: [18, 18],
-      iconAnchor: [9, 18],
-      popupAnchor: [0, -16]
+      html: `<span class="club-pin" style="--pin-color: ${info.color};"></span>`,
+      iconSize: [18, 18], iconAnchor: [9, 18], popupAnchor: [0, -16]
     });
   }
 
@@ -294,56 +259,31 @@
     }
   }
 
-  // Map Hebrew club name aliases to internal keys
-  const CLUB_NAME_MAP = { 'חבר': 'MCC', 'מועדון הוט': 'HOT' };
-
-  function normalizeClub(club) {
-    return CLUB_NAME_MAP[club] || club;
+  // Build the club registry from the loaded businesses, select every club by
+  // default (same behavior the static chips had) and render the filter chips.
+  function initProgramFilters(allBusinesses) {
+    if (_filtersInitialized) return;
+    const labels = allBusinesses.flatMap((b) =>
+      (Array.isArray(b.discounts) ? b.discounts : []).map((d) => d.club || d.club_name)
+    );
+    programRegistry = ProgramRegistry.build(labels);
+    programRegistry.selectableIds.forEach((id) => selectedClubs.add(id));
+    _filtersInitialized = true;
+    updateClubFiltersUI();
   }
+
+  function normalizeClub(club) { return programRegistry.resolve(club); }
 
   function getSelectedClubDiscounts(business) {
     const discounts = Array.isArray(business.discounts) ? business.discounts : [];
-    const activeSet = selectedClubs;
-    return discounts.filter((d) => {
-      const club = normalizeClub(d.club || d.club_name || '');
-      return activeSet.has(club) || (activeSet.size === CLUB_KEYS.length && club);
-    });
+    return discounts.filter((d) => selectedClubs.has(normalizeClub(d.club || d.club_name || '')));
   }
 
   function updateClubFiltersUI() {
-    document.querySelectorAll('.filter-chip').forEach((chip) => {
-      const club = chip.getAttribute('data-club');
-      const active = club === 'ALL' ? selectedClubs.size === CLUB_KEYS.length : selectedClubs.has(club);
-      chip.classList.toggle('active', active);
-    });
-  }
-
-  function attachClubFilterHandlers() {
-    document.querySelectorAll('.filter-chip').forEach((chip) => {
-      chip.addEventListener('click', () => {
-        const clickedClub = chip.getAttribute('data-club');
-        if (clickedClub === 'ALL') {
-          selectedClubs = new Set(CLUB_KEYS);
-        } else {
-          if (selectedClubs.has(clickedClub)) {
-            selectedClubs.delete(clickedClub);
-            if (selectedClubs.size === 0) {
-              selectedClubs = new Set(CLUB_KEYS);
-            }
-          } else {
-            if (selectedClubs.size === CLUB_KEYS.length) {
-              selectedClubs = new Set([clickedClub]);
-            } else {
-              selectedClubs.add(clickedClub);
-            }
-          }
-        }
-        updateClubFiltersUI();
-        if (radiusCircle) {
-          updateUserLocation(currentUserLat, currentUserLon);
-        }
-      });
-    });
+    ProgramRegistry.renderFilters(document.getElementById('programFilters'), programRegistry, {}, selectedClubs, () => {
+      updateClubFiltersUI();
+      if (radiusCircle) updateUserLocation(currentUserLat, currentUserLon);
+    }, false);
   }
 
   // Update Radius from Slider
@@ -384,13 +324,9 @@
 
   // Returns { cssClass, label } for a club name (raw or normalized)
   function clubBadgeInfo(rawClub) {
-    const norm = normalizeClub(rawClub || '');
-    const CSS_MAP = { MCC: 'mcc', HOT: 'hot', HTzone: 'htzone', BUYME: 'buyme' };
-    const LABEL_MAP = { MCC: 'חבר', HOT: 'HOT', HTzone: 'HTzone', BUYME: 'BUYME' };
-    return {
-      cssClass: CSS_MAP[norm] || 'mcc',
-      label: LABEL_MAP[norm] || rawClub || 'חבר'
-    };
+    const id = normalizeClub(rawClub || '');
+    const info = programRegistry.byId.get(id) || { short_name: rawClub || 'מועדון', color: ProgramRegistry.fallbackColor(id) };
+    return { id, label: info.short_name, color: info.color };
   }
 
   function renderBusinessCards(nearby) {
@@ -466,7 +402,7 @@
 
       relatedDiscounts.slice(0, 4).forEach(d => {
         const rawClub = d.club || d.club_name || 'MCC';
-        const { cssClass, label } = clubBadgeInfo(rawClub);
+        const { id: programId, label, color } = clubBadgeInfo(rawClub);
         const text = cleanDiscountText(d.discount || d.discount_text) || 'הטבה';
         const url = d.discount_url || d.url || '#';
 
@@ -474,14 +410,16 @@
         const truncated = text.length > 55 ? text.slice(0, 55) + '…' : text;
 
         const optionLink = document.createElement('a');
-        optionLink.className = `discount-option-item club-${cssClass}`;
+        optionLink.className = 'discount-option-item';
+        optionLink.dataset.programId = programId;
+        optionLink.style.setProperty('--program-color', color);
         optionLink.href = url;
         optionLink.target = '_blank';
         optionLink.rel = 'noopener noreferrer';
         optionLink.title = text; // full text tooltip
         optionLink.innerHTML = `
           <div class="option-left-content">
-            <span class="option-club-badge ${cssClass}">${escapeHtml(label)}</span>
+            <span class="option-club-badge" data-program-id="${escapeHtml(programId)}" style="--program-color:${escapeHtml(color)}">${escapeHtml(label)}</span>
             <div class="option-text-wrap">
               <span class="option-discount-title">${escapeHtml(truncated)}</span>
             </div>
@@ -569,6 +507,7 @@
 
     try {
       const allBusinesses = await loadBusinessesForBounds(minLat, maxLat);
+      initProgramFilters(allBusinesses);
 
       let nearby = [];
       for (const b of allBusinesses) {
@@ -666,8 +605,7 @@
 
   // Run on startup
   window.addEventListener('DOMContentLoaded', () => {
-    updateClubFiltersUI();
-    attachClubFilterHandlers();
+    document.getElementById('pin-btn').addEventListener('click', () => togglePinMode());
     initApp();
   });
 
@@ -712,10 +650,10 @@
         if(businessName!=business.name){
           altName = `<span style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:4px;">${escapeHtml(businessName)}</span>`;
         }
-        const { cssClass: badgeClass, label: badgeLabel } = clubBadgeInfo(d.club || '');
+        const { id: badgeId, label: badgeLabel, color: badgeColor } = clubBadgeInfo(d.club || '');
         item.innerHTML = `
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span class="club-badge ${badgeClass}">${badgeLabel}</span>
+            <span class="club-badge" data-program-id="${escapeHtml(badgeId)}" style="--program-color:${escapeHtml(badgeColor)}">${escapeHtml(badgeLabel)}</span>
             ${altName || ''}
           </div>
           <div style="font-size:0.88rem;color:var(--text-primary);margin-bottom:6px;">${escapeHtml(text)}</div>
