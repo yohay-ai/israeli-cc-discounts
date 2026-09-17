@@ -267,7 +267,7 @@
       (Array.isArray(b.discounts) ? b.discounts : []).map((d) => d.club || d.club_name)
     );
     programRegistry = ProgramRegistry.build(labels);
-    programRegistry.selectableIds.forEach((id) => selectedClubs.add(id));
+    selectedClubs = ProgramRegistry.initialSelection(programRegistry);
     _filtersInitialized = true;
     updateClubFiltersUI();
   }

@@ -265,7 +265,7 @@
                     ? data.map((d) => d.club)
                     : ((data && data.results) || []).flatMap((b) => (b.discounts || []).map((d) => d.club));
                 programRegistry = ProgramRegistry.build(labels);
-                state.selectedClubs = new Set(programRegistry.selectableIds);
+                state.selectedClubs = ProgramRegistry.initialSelection(programRegistry);
 
                 // If response is from /businesses API endpoint
                 if (data && data.results && Array.isArray(data.results)) {
@@ -588,6 +588,7 @@
                 clearFilterBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     state.selectedClubs = new Set(programRegistry.selectableIds);
+                    ProgramRegistry.clearSavedSelection();
                     updateFilterChipsUI();
                     applyFiltersAndSort();
                 });
@@ -694,6 +695,7 @@
             elements.clearSearchBtn.classList.add('hidden');
             state.searchQuery = '';
             state.selectedClubs = new Set(programRegistry.selectableIds);
+            ProgramRegistry.clearSavedSelection();
             updateFilterChipsUI();
             applyFiltersAndSort();
             elements.searchInput.focus();

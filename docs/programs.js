@@ -76,6 +76,81 @@
     return result;
   }
 
+
+  // --- Club selection persistence (cookies) -------------------------------
+  // Stores only program/club identifiers (e.g. "mcc", "discount-key") so the
+  // visitor's club filter choice survives between sessions. No personal data
+  // is ever written. Everything is best-effort: when cookies are unavailable
+  // or blocked the site simply falls back to the default (all clubs).
+  const SELECTION_COOKIE = 'icc_selected_clubs';
+  const SELECTION_COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // one year
+
+  function cookiesAvailable() {
+    return typeof document !== 'undefined' && typeof document.cookie === 'string';
+  }
+
+  function readSavedSelection() {
+    if (!cookiesAvailable()) return null;
+    try {
+      const prefix = `${SELECTION_COOKIE}=`;
+      const entry = document.cookie.split('; ').find((row) => row.startsWith(prefix));
+      if (!entry) return null;
+      const parsed = JSON.parse(decodeURIComponent(entry.slice(prefix.length)));
+      if (!Array.isArray(parsed)) return null;
+      const ids = parsed.filter((id) => typeof id === 'string' && id);
+      return ids.length ? ids : null;
+    } catch (e) {
+      return null; // corrupted cookie: ignore and use the default selection
+    }
+  }
+
+  function writeSelectionCookie(value, maxAge) {
+    if (!cookiesAvailable()) return;
+    try {
+      document.cookie = `${SELECTION_COOKIE}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; samesite=lax`;
+    } catch (e) {
+      // Cookies blocked (private mode, browser settings): persistence is skipped.
+    }
+  }
+
+  function saveSelection(ids) {
+    writeSelectionCookie(JSON.stringify(ids), SELECTION_COOKIE_MAX_AGE);
+  }
+
+  function clearSavedSelection() {
+    writeSelectionCookie('', 0);
+  }
+
+  // The initial selection for a page: the saved subset when one exists and is
+  // still valid for the clubs observed in the current data, otherwise all clubs.
+  function initialSelection(registry) {
+    const selectable = registry.selectableIds || [];
+    const saved = readSavedSelection();
+    if (saved) {
+      const valid = saved.filter((id) => selectable.includes(id));
+      if (valid.length && valid.length < selectable.length) return new Set(valid);
+      // A saved selection that no longer matches anything (or that matches
+      // everything) is stale: drop it so new clubs are selected by default.
+      clearSavedSelection();
+    }
+    return new Set(selectable);
+  }
+
+  // Persist after a user change. Selecting every club is the default state, so
+  // it clears the cookie instead of freezing today's club list (which would
+  // hide clubs added to the data later).
+  function persistSelection(registry, selected) {
+    const selectable = registry.selectableIds || [];
+    if (!selectable.length) return;
+    const allSelected = selectable.every((id) => selected.has(id));
+    if (allSelected || selected.size === 0) {
+      clearSavedSelection();
+      return;
+    }
+    saveSelection(Array.from(selected).filter((id) => selectable.includes(id)));
+  }
+  // -------------------------------------------------------------------------
+
   function renderFilters(container, registry, directCounts, selected, onChange, showCounts) {
     if (!container) return;
     const counts = aggregateCounts(registry, directCounts);
@@ -96,6 +171,7 @@
         const shouldSelect = !ids.every((id) => selected.has(id));
         ids.forEach((id) => shouldSelect ? selected.add(id) : selected.delete(id));
         if (selected.size === 0) registry.selectableIds.forEach((id) => selected.add(id));
+        persistSelection(registry, selected);
         onChange();
       });
       return button;
@@ -103,7 +179,7 @@
     const all = document.createElement('button');
     all.type = 'button'; all.className = `filter-chip${allSelected ? ' active' : ''}`; all.dataset.programId = 'ALL';
     all.innerHTML = `<span class="chip-checkbox">${allSelected ? '✓' : ''}</span><span class="chip-name">כל המועדונים</span>${showCounts ? `<span class="chip-count">${(directCounts.ALL != null ? directCounts.ALL : Object.entries(directCounts).filter(([id]) => id !== 'ALL').reduce((sum, [,count]) => sum + count, 0)).toLocaleString()}</span>` : ''}`;
-    all.addEventListener('click', () => { selected.clear(); registry.selectableIds.forEach((id) => selected.add(id)); onChange(); });
+    all.addEventListener('click', () => { selected.clear(); registry.selectableIds.forEach((id) => selected.add(id)); persistSelection(registry, selected); onChange(); });
     container.appendChild(all);
     registry.parents.forEach((parent) => {
       const descendants = registry.descendants(parent.id);
@@ -116,5 +192,5 @@
     });
   }
 
-  global.ProgramRegistry = { CURATED, build, aggregateCounts, renderFilters, fallbackColor };
+  global.ProgramRegistry = { CURATED, build, aggregateCounts, renderFilters, fallbackColor, initialSelection, persistSelection, clearSavedSelection, readSavedSelection, SELECTION_COOKIE };
 })(window);
