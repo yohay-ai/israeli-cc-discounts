@@ -53,3 +53,11 @@ Open `docs/index.html` or the running API root at `http://127.0.0.1:8000` to vie
 ```bash
 .venv/bin/python save_raw_scrapers.py --scrapers discount_key
 ```
+
+## American Express
+
+`amex_scraper.py` reads the public American Express Israel benefits site (https://rewards.americanexpress.co.il/) and normalizes each benefit into the shared schema. The homepage embeds the full benefit catalog as server-rendered JSON (`window.epi`), so no login is required. Out-of-stock benefits are skipped, and regular/premium point pricing is kept in `limitations`. A failed or empty refresh keeps the last successful `data/discounts/amex_discounts.json` file. Save the source page for debugging with:
+
+```bash
+.venv/bin/python save_raw_scrapers.py --scrapers amex
+```
