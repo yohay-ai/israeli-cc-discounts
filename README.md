@@ -46,6 +46,14 @@ Frontend
 Open `docs/index.html` or the running API root at `http://127.0.0.1:8000` to view the UI. The toolbar now includes a `סוג ההטבה` selector to filter by `discount_type`.
 
 
+## MAX Benefits
+
+`max_benefits_scraper.py` reads the public MAX benefits catalog API (`/api/benefits/getLobby` + paged `/api/benefits/getCategoriesLobby` per category) and normalizes each benefit into the shared schema: club `MAX`, discount text from the catalog subtitle, official benefit URL, terms in `limitations`, and `billing_discount` type for cashback offers (otherwise `voucher`). Out-of-stock and date-expired benefits are skipped. A failed or empty refresh keeps the last successful `data/discounts/max_benefits_discounts.json` file. Save the raw lobby payload for debugging with:
+
+```bash
+.venv/bin/python save_raw_scrapers.py --scrapers max_benefits
+```
+
 ## Discount Key
 
 `discount_key_scraper.py` reads Discount Bank's public participating-business page and normalizes each percentage offer into the shared schema. A failed or empty refresh keeps the last successful `data/discounts/discount_key_discounts.json` file. Save the source page for debugging with:

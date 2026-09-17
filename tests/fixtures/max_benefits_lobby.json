@@ -1,0 +1,20 @@
+{
+ "result": {
+  "categories": [
+   {
+    "name": "הופעות חיות",
+    "urlName": "musicshows"
+   }
+  ],
+  "navBarCategories": [
+   {
+    "name": "אטרקציות",
+    "urlName": "attractions"
+   },
+   {
+    "name": "כפול",
+    "urlName": "musicshows"
+   }
+  ]
+ }
+}
