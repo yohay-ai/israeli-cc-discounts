@@ -217,16 +217,30 @@ def save_amex_raw() -> None:
         print(f"[Amex] Request failed: {e}")
 
 
+def save_max_benefits_raw() -> None:
+    from max_benefits_scraper import HEADERS, LOBBY_URL, _REQUESTS_KWARGS
+
+    out_dir = os.path.join(RAW_DIR, "max_benefits")
+    os.makedirs(out_dir, exist_ok=True)
+    try:
+        response = requests.get(LOBBY_URL, headers=HEADERS, timeout=30, **_REQUESTS_KWARGS)
+        response.raise_for_status()
+        _write(os.path.join(out_dir, "lobby.json"), response.text, mode="w")
+        print(f"[MAX Benefits] Saved lobby payload to {out_dir}")
+    except Exception as e:
+        print(f"[MAX Benefits] Request failed: {e}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--all", action="store_true", help="Fetch raw for all supported scrapers")
-    p.add_argument("--scrapers", help="Comma-separated list of scrapers to run (htzone,hot,mcc,hvr,buyme,discount_key,amex)")
+    p.add_argument("--scrapers", help="Comma-separated list of scrapers to run (htzone,hot,mcc,hvr,buyme,discount_key,amex,max_benefits)")
     p.add_argument("--buyme", type=int, help="Single buyme supplier id to fetch")
     args = p.parse_args()
 
     to_run = []
     if args.all:
-        to_run = ["htzone", "hot", "mcc", "hvr", "buyme", "discount_key", "amex"]
+        to_run = ["htzone", "hot", "mcc", "hvr", "buyme", "discount_key", "amex", "max_benefits"]
     elif args.scrapers:
         to_run = [s.strip() for s in args.scrapers.split(",") if s.strip()]
 
@@ -238,6 +252,8 @@ def main():
         save_discount_key_raw()
     if "amex" in to_run:
         save_amex_raw()
+    if "max_benefits" in to_run:
+        save_max_benefits_raw()
     if "htzone" in to_run:
         save_htzone_raw()
     if "hot" in to_run:

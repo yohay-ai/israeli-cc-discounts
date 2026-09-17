@@ -8,6 +8,7 @@ from htzone_scraper import scrape_htzone
 from mcc_scraper import scrape_mcc
 from hvr_scraper import scrape_hvr_rechargeable_cards
 from max_giftcard_scraper import scrape_max
+from max_benefits_scraper import scrape_max_benefits
 from buyme_scraper import scrape_buyme_suppliers, stores_to_discounts
 from discount_key_scraper import scrape_discount_key
 from amex_scraper import scrape_amex
@@ -180,6 +181,33 @@ def main():
         print(f"[WARNING] MAX Scraper returned 0 items. Retaining previous data from {max_path}.\n")
         max_data = load_existing_json(max_path) or []
 
+    # 4.7 Scrape MAX benefits catalog
+    max_benefits_path = os.path.join(DISCOUNTS_DIR, "max_benefits_discounts.json")
+    try:
+        max_benefits_data = scrape_max_benefits(
+            now_iso=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        )
+    except Exception as exc:
+        print(f"[WARNING] MAX benefits scraper failed: {exc}")
+        max_benefits_data = []
+    if max_benefits_data:
+        with open(max_benefits_path, "w", encoding="utf-8") as f:
+            json.dump(max_benefits_data, f, ensure_ascii=False, indent=4)
+        metadata["max_benefits"] = {
+            "last_successful_scrape": now_iso,
+            "count": len(max_benefits_data),
+        }
+        print(
+            f"--> Saved {len(max_benefits_data)} MAX benefits items to"
+            f" {max_benefits_path}.\n"
+        )
+    else:
+        max_benefits_data = load_existing_json(max_benefits_path) or []
+        print(
+            f"[WARNING] MAX benefits Scraper returned 0 items. Retaining"
+            f" previous data from {max_benefits_path}.\n"
+        )
+
     # 5. Scrape BUYME (voucher-type suppliers)
     buyme_result = scrape_buyme_suppliers(out_dir=DATA_DIR)
     buyme_stores = buyme_result.get("stores", [])
@@ -238,7 +266,7 @@ def main():
 
     # 6. Create Combined Card Comparison File
     combined_list = (
-        mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data + amex_data
+        mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data + amex_data + max_benefits_data
     )
 
     # Append Buyme discounts (normalized) to combined list
