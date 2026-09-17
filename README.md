@@ -1,6 +1,6 @@
 Discount Finder
 
-This project scrapes discount offers from Israeli club sites (`חבר`, `HOT`, `HTzone`,`Buyme`), normalizes them and provides a small web UI and API.
+This project scrapes discount offers from Israeli club sites (`חבר`, `HOT`, `HTzone`, `Buyme`, `מפתח דיסקונט`), normalizes them and provides a small web UI and API.
 
 New fields added (2026-09-02):
 - `discount_type`: enum indicating the discount mechanism. Known values: `billing_discount` (legacy/default), `rechargeable_card`, `voucher`, `gift_card`, `club_card`.
@@ -44,3 +44,12 @@ pip install -r requirements.txt
 Frontend
 
 Open `docs/index.html` or the running API root at `http://127.0.0.1:8000` to view the UI. The toolbar now includes a `סוג ההטבה` selector to filter by `discount_type`.
+
+
+## Discount Key
+
+`discount_key_scraper.py` reads Discount Bank's public participating-business page and normalizes each percentage offer into the shared schema. A failed or empty refresh keeps the last successful `data/discounts/discount_key_discounts.json` file. Save the source page for debugging with:
+
+```bash
+.venv/bin/python save_raw_scrapers.py --scrapers discount_key
+```

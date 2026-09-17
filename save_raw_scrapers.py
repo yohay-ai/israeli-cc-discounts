@@ -188,16 +188,31 @@ def save_buyme_raw(supplier_id: int) -> None:
     print(f"[BUYME] Saved raw buyme data for supplier {supplier_id} to {out_dir}")
 
 
+
+def save_discount_key_raw() -> None:
+    from discount_key_scraper import HEADERS, SOURCE_URL
+
+    out_dir = os.path.join(RAW_DIR, "discount_key")
+    os.makedirs(out_dir, exist_ok=True)
+    try:
+        response = requests.get(SOURCE_URL, headers=HEADERS, timeout=30)
+        response.raise_for_status()
+        _write(os.path.join(out_dir, "participating_businesses.html"), response.text, mode="w")
+        print(f"[Discount Key] Saved participating-business page to {out_dir}")
+    except Exception as e:
+        print(f"[Discount Key] Request failed: {e}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--all", action="store_true", help="Fetch raw for all supported scrapers")
-    p.add_argument("--scrapers", help="Comma-separated list of scrapers to run (htzone,hot,mcc,hvr,buyme)")
+    p.add_argument("--scrapers", help="Comma-separated list of scrapers to run (htzone,hot,mcc,hvr,buyme,discount_key)")
     p.add_argument("--buyme", type=int, help="Single buyme supplier id to fetch")
     args = p.parse_args()
 
     to_run = []
     if args.all:
-        to_run = ["htzone", "hot", "mcc", "hvr", "buyme"]
+        to_run = ["htzone", "hot", "mcc", "hvr", "buyme", "discount_key"]
     elif args.scrapers:
         to_run = [s.strip() for s in args.scrapers.split(",") if s.strip()]
 
@@ -205,6 +220,8 @@ def main():
         print("Nothing to do. Use --all or --scrapers. Example: --scrapers htzone,hot")
         return
 
+    if "discount_key" in to_run:
+        save_discount_key_raw()
     if "htzone" in to_run:
         save_htzone_raw()
     if "hot" in to_run:
