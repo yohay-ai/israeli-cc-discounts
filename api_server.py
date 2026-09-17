@@ -176,6 +176,14 @@ def get_app_js():
     raise HTTPException(status_code=404, detail="app.js not found")
 
 
+@app.get("/freshness.js")
+def get_freshness_js():
+    js_file = os.path.join(STATIC_DIR, "freshness.js")
+    if os.path.exists(js_file):
+        return FileResponse(js_file, media_type="application/javascript")
+    raise HTTPException(status_code=404, detail="freshness.js not found")
+
+
 @app.get("/")
 def index(request: Request):
     """Serve the Web UI interface."""

@@ -1319,6 +1319,21 @@ body {
     color: var(--text-secondary);
 }
 
+.data-freshness {
+    margin-top: 0.55rem;
+    color: #86efac;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.data-freshness.is-stale {
+    color: #fbbf24;
+}
+
+.data-freshness.is-outdated {
+    color: #fca5a5;
+}
+
 .footer-links {
     display: flex;
     align-items: center;

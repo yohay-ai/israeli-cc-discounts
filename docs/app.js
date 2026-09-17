@@ -203,6 +203,13 @@
         }
     }
 
+    function cleanDiscountText(value) {
+        if (!value) return '';
+        const container = document.createElement('div');
+        container.innerHTML = String(value).replace(/<br\s*\/?\s*>/gi, ' ');
+        return (container.textContent || '').replace(/\s+/g, ' ').trim();
+    }
+
     // Process raw array of discount items into grouped business records
     function processRawDiscounts(dataList) {
         const names = new Map();
@@ -240,7 +247,7 @@
             const entry = names.get(name);
             entry.discounts.push({
                 club: club,
-                discount: d.discount || '',
+                discount: cleanDiscountText(d.discount),
                 discount_url: d.discount_url || '',
                 discount_type: d.discount_type || null,
                 discount_value: d.discount_value != null ? Number(d.discount_value) : null,
