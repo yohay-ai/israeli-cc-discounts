@@ -10,6 +10,7 @@ from hvr_scraper import scrape_hvr_rechargeable_cards
 from max_giftcard_scraper import scrape_max
 from buyme_scraper import scrape_buyme_suppliers, stores_to_discounts
 from discount_key_scraper import scrape_discount_key
+from amex_scraper import scrape_amex
 
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -72,6 +73,7 @@ def load_existing_json(filepath):
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
+    os.makedirs(DISCOUNTS_DIR, exist_ok=True)
     os.makedirs(DOCS_DATA_DIR, exist_ok=True)
     print("================ STARTING CARDS COMPARISON SCRAPER ================\n")
 
@@ -80,6 +82,7 @@ def main():
     htzone_path = os.path.join(DISCOUNTS_DIR, "htzone_discounts.json")
     buyme_path = os.path.join(DISCOUNTS_DIR, "buyme_discounts.json")
     discount_key_path = os.path.join(DISCOUNTS_DIR, "discount_key_discounts.json")
+    amex_path = os.path.join(DISCOUNTS_DIR, "amex_discounts.json")
     hvr_path = os.path.join(DISCOUNTS_DIR, "hvr_rechargeable_cards.json")
     combined_path = os.path.join(DISCOUNTS_DIR, "all_combined_discounts.json")
     metadata_path = os.path.join(DISCOUNTS_DIR, "scrape_metadata.json")
@@ -215,8 +218,28 @@ def main():
         discount_key_data = load_existing_json(discount_key_path) or []
         print("[WARNING] Discount Key scraper returned 0 items; keeping prior normalized file.")
 
+    # 5.7 Scrape American Express benefits
+    try:
+        amex_data = scrape_amex()
+    except Exception as exc:
+        print(f"[WARNING] American Express scraper failed: {exc}")
+        amex_data = []
+    if amex_data:
+        with open(amex_path, "w", encoding="utf-8") as f:
+            json.dump(amex_data, f, ensure_ascii=False, indent=4)
+        metadata["amex"] = {
+            "last_successful_scrape": now_iso,
+            "count": len(amex_data),
+        }
+        print(f"--> Saved {len(amex_data)} American Express items to {amex_path}.")
+    else:
+        amex_data = load_existing_json(amex_path) or []
+        print("[WARNING] American Express scraper returned 0 items; keeping prior normalized file.")
+
     # 6. Create Combined Card Comparison File
-    combined_list = mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data
+    combined_list = (
+        mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data + amex_data
+    )
 
     # Append Buyme discounts (normalized) to combined list
     if buyme_discounts:
