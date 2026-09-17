@@ -156,6 +156,7 @@
   let businessLayerGroup = L.layerGroup();
   let programRegistry = ProgramRegistry.build([]);
   let selectedClubs = new Set();
+  let _filtersInitialized = false;
 
   let isPinMode = false;
   let currentUserLat = 32.0853; // Default Tel Aviv center fallback
@@ -256,6 +257,19 @@
       btn.innerText = '📍 בחר מיקום על המפה';
       document.getElementById('map').style.cursor = '';
     }
+  }
+
+  // Build the club registry from the loaded businesses, select every club by
+  // default (same behavior the static chips had) and render the filter chips.
+  function initProgramFilters(allBusinesses) {
+    if (_filtersInitialized) return;
+    const labels = allBusinesses.flatMap((b) =>
+      (Array.isArray(b.discounts) ? b.discounts : []).map((d) => d.club || d.club_name)
+    );
+    programRegistry = ProgramRegistry.build(labels);
+    programRegistry.selectableIds.forEach((id) => selectedClubs.add(id));
+    _filtersInitialized = true;
+    updateClubFiltersUI();
   }
 
   function normalizeClub(club) { return programRegistry.resolve(club); }
@@ -493,6 +507,7 @@
 
     try {
       const allBusinesses = await loadBusinessesForBounds(minLat, maxLat);
+      initProgramFilters(allBusinesses);
 
       let nearby = [];
       for (const b of allBusinesses) {
