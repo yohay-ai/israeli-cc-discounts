@@ -139,10 +139,11 @@
         <div class="footer-left">
             <p>מערכת איתור והשוואת הנחות אשראי &copy; 2026</p>
             <p class="footer-note">הנתונים נאספים ממועדוני האשראי הרשמיים (חבר, HOT, HTzone) וגם מ-BUYME ו-MAX ומתעדכנים מדי יום.</p>
+            <p id="dataFreshness" class="data-freshness" role="status" aria-live="polite">בודק מתי הנתונים עודכנו...</p>
         </div>
         <div class="footer-links">
-            <a href="/docs" target="_blank" class="footer-link">תיעוד API (Swagger)</a>
-            <a href="/api/info" target="_blank" class="footer-link">מצב שירות (JSON)</a>
+            <a href="https://github.com/yohaybn/israeli-cc-discounts" target="_blank" rel="noopener noreferrer" class="footer-link">קוד המקור ב-GitHub</a>
+            <a href="https://github.com/yohaybn/israeli-cc-discounts/issues" target="_blank" rel="noopener noreferrer" class="footer-link">דיווח על בעיה</a>
         </div>
     </div>
 </footer>
@@ -168,6 +169,7 @@
         <div class="discounts-list"></div>
     </div>
 </template>
+    <script src="./freshness.js"></script>
 <!-- Official Leaflet 1.9.4 JavaScript -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -356,6 +358,12 @@
     }
   }
 
+  function cleanDiscountText(value) {
+    const container = document.createElement('div');
+    container.innerHTML = String(value ?? '').replace(/<br\s*\/?\s*>/gi, ' ');
+    return (container.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -459,7 +467,7 @@
       relatedDiscounts.slice(0, 4).forEach(d => {
         const rawClub = d.club || d.club_name || 'MCC';
         const { cssClass, label } = clubBadgeInfo(rawClub);
-        const text = d.discount || d.discount_text || 'הטבה';
+        const text = cleanDiscountText(d.discount || d.discount_text) || 'הטבה';
         const url = d.discount_url || d.url || '#';
 
         const isVoucher = /שובר|voucher/i.test(text);
@@ -603,7 +611,7 @@
 
           const discountsHtml = matchingDiscounts.slice(0, 3).map(d => {
             const club = d.club || '';
-            const text = d.discount || d.discount_text || '';
+            const text = cleanDiscountText(d.discount || d.discount_text);
             const url = d.discount_url || d.url || '';
             const urlHtml = url ? `<a href="${url}" target="_blank" class="map-btn" style="margin-left:6px;">הצג</a>` : '';
             return `<div style="margin-bottom:6px;"><b>${club}</b>: ${text} ${urlHtml}</div>`;
@@ -697,7 +705,7 @@
         const item = document.createElement('div');
         item.className = 'deal-item';
         const club = d.club || '';
-        const text = d.discount || d.discount_text || '';
+        const text = cleanDiscountText(d.discount || d.discount_text);
         const url = d.discount_url || d.url || '';
         const businessName = d.name || d.business_name || 'עסק';
         var altName;

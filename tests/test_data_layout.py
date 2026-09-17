@@ -7,6 +7,7 @@ class DataLayoutTest(unittest.TestCase):
         frontend_files = {
             "docs/data/all_combined_discounts.json",
             "docs/data/businesses_with_discounts.json",
+            "docs/data/data_freshness.json",
         }
         forbidden_files = {
             "docs/data/mcc_discounts.json",

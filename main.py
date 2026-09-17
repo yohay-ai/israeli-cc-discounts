@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import html
 import json
 import os
 import re
@@ -14,6 +15,17 @@ DATA_DIR = os.path.join(BASE_DIR, "data")
 DISCOUNTS_DIR = os.path.join(DATA_DIR, "discounts")
 
 DOCS_DATA_DIR = os.path.join(BASE_DIR, "docs", "data")
+PUBLISHED_FRESHNESS_FILE = os.path.join(DOCS_DATA_DIR, "data_freshness.json")
+
+
+def clean_discount_text(value):
+    """Convert scraper-provided HTML fragments into readable plain text."""
+    if value is None:
+        return ""
+    text = html.unescape(str(value))
+    text = re.sub(r"<br\s*/?>", " ", text, flags=re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def normalize_dedupe_value(value):
@@ -191,6 +203,10 @@ def main():
         combined_list = combined_list + buyme_discounts
         print(f"--> Added {len(buyme_discounts)} buyme discounts to combined dataset.")
 
+    for item in combined_list:
+        if isinstance(item, dict):
+            item["discount"] = clean_discount_text(item.get("discount"))
+
     combined_list = deduplicate_records(combined_list)
     print(f"--> Deduplicated combined dataset to {len(combined_list)} unique records.")
 
@@ -251,6 +267,18 @@ def main():
     with open(metadata_path, "w", encoding="utf-8") as f:
         json.dump(metadata, f, ensure_ascii=False, indent=4)
     print(f"--> Updated scrape metadata in {metadata_path}.")
+
+    freshness = {
+        "published_at": metadata.get("all_combined", {}).get("last_updated"),
+        "sources": {
+            key: value.get("last_successful_scrape")
+            for key, value in metadata.items()
+            if isinstance(value, dict) and value.get("last_successful_scrape")
+        },
+    }
+    with open(PUBLISHED_FRESHNESS_FILE, "w", encoding="utf-8") as f:
+        json.dump(freshness, f, ensure_ascii=False, indent=2)
+    print(f"--> Published data freshness metadata to {PUBLISHED_FRESHNESS_FILE}.")
 
     print("\n================ FINISHED PROCESS ================")
     print(
