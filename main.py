@@ -9,6 +9,7 @@ from mcc_scraper import scrape_mcc
 from hvr_scraper import scrape_hvr_rechargeable_cards
 from max_giftcard_scraper import scrape_max
 from buyme_scraper import scrape_buyme_suppliers, stores_to_discounts
+from discount_key_scraper import scrape_discount_key
 
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -78,6 +79,7 @@ def main():
     hot_path = os.path.join(DISCOUNTS_DIR, "hot_discounts.json")
     htzone_path = os.path.join(DISCOUNTS_DIR, "htzone_discounts.json")
     buyme_path = os.path.join(DISCOUNTS_DIR, "buyme_discounts.json")
+    discount_key_path = os.path.join(DISCOUNTS_DIR, "discount_key_discounts.json")
     hvr_path = os.path.join(DISCOUNTS_DIR, "hvr_rechargeable_cards.json")
     combined_path = os.path.join(DISCOUNTS_DIR, "all_combined_discounts.json")
     metadata_path = os.path.join(DISCOUNTS_DIR, "scrape_metadata.json")
@@ -195,8 +197,26 @@ def main():
     }
     print(f"--> Normalized {len(buyme_stores)} BuyMe store entries for the combined dataset.")
 
+    # 5.5 Scrape Discount Key participating businesses
+    try:
+        discount_key_data = scrape_discount_key()
+    except Exception as exc:
+        print(f"[WARNING] Discount Key scraper failed: {exc}")
+        discount_key_data = []
+    if discount_key_data:
+        with open(discount_key_path, "w", encoding="utf-8") as f:
+            json.dump(discount_key_data, f, ensure_ascii=False, indent=4)
+        metadata["discount_key"] = {
+            "last_successful_scrape": now_iso,
+            "count": len(discount_key_data),
+        }
+        print(f"--> Saved {len(discount_key_data)} Discount Key items to {discount_key_path}.")
+    else:
+        discount_key_data = load_existing_json(discount_key_path) or []
+        print("[WARNING] Discount Key scraper returned 0 items; keeping prior normalized file.")
+
     # 6. Create Combined Card Comparison File
-    combined_list = mcc_data + hot_data + htzone_data + hvr_data + max_data
+    combined_list = mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data
 
     # Append Buyme discounts (normalized) to combined list
     if buyme_discounts:
