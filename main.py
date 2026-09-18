@@ -12,6 +12,7 @@ from max_benefits_scraper import scrape_max_benefits
 from buyme_scraper import scrape_buyme_suppliers, stores_to_discounts
 from discount_key_scraper import scrape_discount_key
 from amex_scraper import scrape_amex
+from isracard_scraper import scrape_isracard
 
 BASE_DIR = os.path.dirname(__file__)
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -84,6 +85,7 @@ def main():
     buyme_path = os.path.join(DISCOUNTS_DIR, "buyme_discounts.json")
     discount_key_path = os.path.join(DISCOUNTS_DIR, "discount_key_discounts.json")
     amex_path = os.path.join(DISCOUNTS_DIR, "amex_discounts.json")
+    isracard_path = os.path.join(DISCOUNTS_DIR, "isracard_discounts.json")
     hvr_path = os.path.join(DISCOUNTS_DIR, "hvr_rechargeable_cards.json")
     combined_path = os.path.join(DISCOUNTS_DIR, "all_combined_discounts.json")
     metadata_path = os.path.join(DISCOUNTS_DIR, "scrape_metadata.json")
@@ -264,9 +266,27 @@ def main():
         amex_data = load_existing_json(amex_path) or []
         print("[WARNING] American Express scraper returned 0 items; keeping prior normalized file.")
 
+    # 5.8 Scrape Isracard benefits
+    try:
+        isracard_data = scrape_isracard()
+    except Exception as exc:
+        print(f"[WARNING] Isracard scraper failed: {exc}")
+        isracard_data = []
+    if isracard_data:
+        with open(isracard_path, "w", encoding="utf-8") as f:
+            json.dump(isracard_data, f, ensure_ascii=False, indent=4)
+        metadata["isracard"] = {
+            "last_successful_scrape": now_iso,
+            "count": len(isracard_data),
+        }
+        print(f"--> Saved {len(isracard_data)} Isracard items to {isracard_path}.")
+    else:
+        isracard_data = load_existing_json(isracard_path) or []
+        print("[WARNING] Isracard scraper returned 0 items; keeping prior normalized file.")
+
     # 6. Create Combined Card Comparison File
     combined_list = (
-        mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data + amex_data + max_benefits_data
+        mcc_data + hot_data + htzone_data + hvr_data + max_data + discount_key_data + amex_data + max_benefits_data + isracard_data
     )
 
     # Append Buyme discounts (normalized) to combined list

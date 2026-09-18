@@ -231,6 +231,20 @@ def save_max_benefits_raw() -> None:
         print(f"[MAX Benefits] Request failed: {e}")
 
 
+def save_isracard_raw() -> None:
+    from isracard_scraper import HEADERS, BASE_URL, _REQUESTS_KWARGS
+
+    out_dir = os.path.join(RAW_DIR, "isracard")
+    os.makedirs(out_dir, exist_ok=True)
+    try:
+        response = requests.get(BASE_URL, headers=HEADERS, timeout=30, **_REQUESTS_KWARGS)
+        response.raise_for_status()
+        _write(os.path.join(out_dir, "benefits_homepage.html"), response.text, mode="w")
+        print(f"[Isracard] Saved benefits homepage to {out_dir}")
+    except Exception as e:
+        print(f"[Isracard] Request failed: {e}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--all", action="store_true", help="Fetch raw for all supported scrapers")
@@ -240,7 +254,7 @@ def main():
 
     to_run = []
     if args.all:
-        to_run = ["htzone", "hot", "mcc", "hvr", "buyme", "discount_key", "amex", "max_benefits"]
+        to_run = ["htzone", "hot", "mcc", "hvr", "buyme", "discount_key", "amex", "max_benefits", "isracard"]
     elif args.scrapers:
         to_run = [s.strip() for s in args.scrapers.split(",") if s.strip()]
 
@@ -252,6 +266,8 @@ def main():
         save_discount_key_raw()
     if "amex" in to_run:
         save_amex_raw()
+    if "isracard" in to_run:
+        save_isracard_raw()
     if "max_benefits" in to_run:
         save_max_benefits_raw()
     if "htzone" in to_run:

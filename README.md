@@ -25,6 +25,7 @@ Discount Finder collects discount offers from Israeli credit-card clubs and loya
 | BUYME | BUYME supplier discounts |
 | Discount Key (מפתח דיסקונט) | Discount Bank participating businesses |
 | American Express Israel | The Amex rewards catalog |
+| Isracard | The Isracard benefits catalog (benefits.isracard.co.il) |
 
 Every source is public data - no login required. New sources are added over time; each one is documented below.
 
@@ -101,4 +102,12 @@ Contributions are welcome - new sources, better normalization, UI improvements.
 
 ```bash
 .venv/bin/python save_raw_scrapers.py --scrapers amex
+```
+
+### Isracard
+
+`isracard_scraper.py` reads the public Isracard benefits site (https://benefits.isracard.co.il/) and normalizes each benefit into the shared schema. Like the Amex source, the homepage embeds the entire catalog (300+ benefits, with descriptions, terms and category) as server-rendered JSON (`window.epi`), so a single request covers everything and no login is required. Out-of-stock benefits are skipped; premium benefits are flagged in `limitations`. Note: isracard.co.il blocks datacenter IPs via Cloudflare (ASN-based, not geographic), so run it from a residential connection. A failed or empty refresh keeps the last successful `data/discounts/isracard_discounts.json` file. Save the source page for debugging with:
+
+```bash
+.venv/bin/python save_raw_scrapers.py --scrapers isracard
 ```
