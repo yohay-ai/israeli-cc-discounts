@@ -2,7 +2,7 @@
 
 טבלת מעקב: כל המועדונים וכרטיסי ההטבות שקיימים באפליקציית Fid (נשלף מה-API הציבורי `cardslistv2.php`, 18.9.26), מול מצב הסקרייפרים בריפו.
 
-**סיכום: 171 מועדונים | ✅ יש סקרייפר: 14 | ⬜ טרם נכתב: 130 | ⛔ חסום טכנית: 27 | ⚖️ חסום משפטית: 0**
+**סיכום: 171 מועדונים | ✅ יש סקרייפר: 18 | ⬜ טרם נכתב: 130 | ⛔ חסום טכנית: 23 | ⚖️ חסום משפטית: 0**
 
 מקרא:
 - ✅ יש סקרייפר - קיים `*_scraper.py` בריפו (הקישור בעמודת "קישור להטבות" הוא מקור הנתונים שהסקרייפר קורא).
@@ -18,10 +18,10 @@
 |---|---|---|---|
 | כאל | ⛔ חסום טכנית | - | חסום טכנית: anti-bot / קטלוג דליל (הוחלט לדלג, 17.9.26) |
 | CashCal Pro | ⛔ חסום טכנית | - | חסום טכנית: anti-bot / קטלוג דליל (הוחלט לדלג, 17.9.26) |
-| ישראכרט | ⛔ חסום טכנית | - | חסום טכנית: WAF של ישראכרט (הוחלט לדלג, 17.9.26) |
-| Isracard Top / ישראכרט טופ | ⛔ חסום טכנית | - | חסום טכנית: WAF של ישראכרט (הוחלט לדלג, 17.9.26) |
-| Isracard Top /ישרכארט טופ מהדרין | ⛔ חסום טכנית | - | חסום טכנית: WAF של ישראכרט (הוחלט לדלג, 17.9.26) |
-| +CashBack(ישראכרט) | ⛔ חסום טכנית | - | חסום טכנית: WAF של ישראכרט (הוחלט לדלג, 17.9.26) |
+| ישראכרט | ✅ יש סקרייפר | [הטבות](https://benefits.isracard.co.il/) | isracard_scraper.py - קטלוג benefits.isracard.co.il (ציבורי, ללא לוגין; חד-עמדי, window.epi) |
+| Isracard Top / ישראכרט טופ | ✅ יש סקרייפר | [הטבות](https://benefits.isracard.co.il/) | isracard_scraper.py - קטלוג benefits.isracard.co.il (ציבורי, ללא לוגין; חד-עמדי, window.epi) |
+| Isracard Top /ישרכארט טופ מהדרין | ✅ יש סקרייפר | [הטבות](https://benefits.isracard.co.il/) | isracard_scraper.py - קטלוג benefits.isracard.co.il (ציבורי, ללא לוגין; חד-עמדי, window.epi) |
+| +CashBack(ישראכרט) | ✅ יש סקרייפר | [הטבות](https://benefits.isracard.co.il/) | isracard_scraper.py - קטלוג benefits.isracard.co.il (ציבורי, ללא לוגין; חד-עמדי, window.epi) |
 | מקס | ✅ יש סקרייפר | [הטבות](https://www.max.co.il) | max_benefits_scraper.py - קטלוג ההטבות הציבורי של MAX |
 | מקס אקזקיוטיב | ✅ יש סקרייפר | [הטבות](https://www.max.co.il) | max_benefits_scraper.py - קטלוג ההטבות הציבורי של MAX |
 | אמריקן אקספרס | ✅ יש סקרייפר | [הטבות](https://rewards.americanexpress.co.il/) | amex_scraper.py - קטלוג rewards.americanexpress.co.il (ציבורי, ללא לוגין) |
